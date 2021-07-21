@@ -1,11 +1,15 @@
 package com.example.remotejoystick17.view_model;
 
+import android.os.Looper;
 import android.util.Log;
 
+import com.example.remotejoystick17.MsgUtil.MsgUtil;
 import com.example.remotejoystick17.model.Model;
 
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+
 
 public class ViewModel extends Observable implements Observer {
 
@@ -32,18 +36,28 @@ public class ViewModel extends Observable implements Observer {
     }
 
     public void connectToFlightGear(String ip, String port) {
-        int portNumber = Integer.parseInt(port);
-        model.connectToFlightGear(ip,portNumber);
+            int portNumber = Integer.parseInt(port);
+            model.connectToFlightGear(ip, portNumber);
+    }
+
+    private void connectionFailed() {
+        setChanged();
+        notifyObservers(MsgUtil.CONNECTION_FAILED);
+    }
+
+    private void connectionSucceeded() {
+        setChanged();
+        notifyObservers(MsgUtil.CONNECTION_SUCCESS);
     }
 
 
     @Override
     public void update(Observable o, Object arg) {
-        if(o == model) {
-            if(model.isConnected()) {
-                Log.i("check","success");
+        if (o == model) {
+            if (model.isConnected()) {
+                connectionSucceeded();
             } else {
-                Log.i("check","fail");
+                connectionFailed();
             }
 
         }

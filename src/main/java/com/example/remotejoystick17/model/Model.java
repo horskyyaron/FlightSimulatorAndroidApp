@@ -1,18 +1,24 @@
 package com.example.remotejoystick17.model;
 
 
+import android.os.Looper;
 import android.util.Log;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Observable;
 
 public class Model extends Observable {
 
     private static boolean isConnected = false;
+    private Thread t;
+    private Socket fg;
 
     public Model() {
-        //connect to flight gear?
+        t =  null;
+        fg = null;
     }
 
     public void aileron(float a) {
@@ -32,15 +38,26 @@ public class Model extends Observable {
     }
 
     public void connectToFlightGear(String ip, int port) {
-        //1 - connection success
-        //else - connection fail.
-        if(port == 1) {
-            isConnected = true;
-        } else {
-            isConnected = false;
-        }
-        setChanged();
-        notifyObservers();
+
+        t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    fg = new Socket(ip,port);
+                    isConnected = true;
+                } catch (IOException e) {
+                    isConnected = false;
+                } finally {
+
+                    synchronized (this) {
+                        setChanged();
+                        notifyObservers(isConnected);
+                    }
+                }
+            }
+        });
+        t.start();
+
     }
 
     public boolean isConnected() {
