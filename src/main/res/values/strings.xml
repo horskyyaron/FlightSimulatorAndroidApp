@@ -2,4 +2,6 @@
     <string name="app_name">RemoteJoystick1.7</string>
     <string name="ip_adress">Enter IP adress</string>
     <string name="port_edit_text">Enter port number</string>
+    <string name="connect_btn_msg" />
+    <string name="connect_btn">CONNECT</string>
 </resources>

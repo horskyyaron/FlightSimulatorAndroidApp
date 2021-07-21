@@ -4,13 +4,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <!--  data binding to the ViewModel -->
+        <variable
+            name="viewModel"
+            type="com.example.remotejoystick17.view_model.ViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".views.MainActivity">
 
         <EditText
-            android:id="@+id/editTextTextPersonName"
+            android:id="@+id/ip_edit_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -24,7 +31,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/editTextTextPersonName2"
+            android:id="@+id/port_edit_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -35,12 +42,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.502"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+            app:layout_constraintTop_toBottomOf="@+id/ip_edit_text" />
 
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/seekbar_margin"
+            android:layout_marginEnd="@dimen/seekbar_margin"
             android:layout_marginBottom="148dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -48,13 +57,13 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <com.example.remotejoystick17.views.VerticalSeekBar
-            android:id="@+id/seekBar2"
+            android:id="@+id/vertical_seekbar"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginStart="28dp"
+            android:layout_marginStart="@dimen/seekbar_margin"
             app:layout_constraintBottom_toTopOf="@+id/seekBar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName2"
+            app:layout_constraintTop_toBottomOf="@+id/port_edit_text"
             app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
@@ -65,19 +74,19 @@
             app:layout_constraintBottom_toTopOf="@+id/seekBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.3"
-            app:layout_constraintStart_toEndOf="@+id/seekBar2"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName2"
+            app:layout_constraintStart_toEndOf="@+id/vertical_seekbar"
+            app:layout_constraintTop_toBottomOf="@+id/port_edit_text"
             app:layout_constraintVertical_bias="0.507" />
 
         <Button
             android:id="@+id/connect_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CONNECT"
+            android:text="@string/connect_btn"
             app:layout_constraintBottom_toTopOf="@+id/imageView2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName2" />
+            app:layout_constraintTop_toBottomOf="@+id/port_edit_text" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
