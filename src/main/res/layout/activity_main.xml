@@ -45,7 +45,7 @@
             app:layout_constraintTop_toBottomOf="@+id/ip_edit_text" />
 
         <SeekBar
-            android:id="@+id/seekBar"
+            android:id="@+id/rudder_seekbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/seekbar_margin"
@@ -57,11 +57,11 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <com.example.remotejoystick17.views.VerticalSeekBar
-            android:id="@+id/vertical_seekbar"
+            android:id="@+id/throttle_vertical_seekbar"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/seekbar_margin"
-            app:layout_constraintBottom_toTopOf="@+id/seekBar"
+            app:layout_constraintBottom_toTopOf="@+id/rudder_seekbar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/port_edit_text"
             app:layout_constraintVertical_bias="0.0" />
@@ -71,10 +71,10 @@
             android:layout_width="237dp"
             android:layout_height="268dp"
             android:src="@drawable/sukuna"
-            app:layout_constraintBottom_toTopOf="@+id/seekBar"
+            app:layout_constraintBottom_toTopOf="@+id/rudder_seekbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.3"
-            app:layout_constraintStart_toEndOf="@+id/vertical_seekbar"
+            app:layout_constraintStart_toEndOf="@+id/throttle_vertical_seekbar"
             app:layout_constraintTop_toBottomOf="@+id/port_edit_text"
             app:layout_constraintVertical_bias="0.507" />
 

@@ -27,7 +27,7 @@ public class ViewModel extends Observable implements Observer {
         model.elevator(e);
     }
 
-    public void setRudder(float r) {
+    public void setRudder(double r) {
         model.rudder(r);
     }
 
