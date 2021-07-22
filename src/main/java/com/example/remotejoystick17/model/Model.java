@@ -6,8 +6,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Observable;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class Model extends Observable {
@@ -18,12 +16,13 @@ public class Model extends Observable {
     private static boolean isConnected = false;
     private Socket fg;
     private PrintWriter out;
-    private ExecutorService pool;
+    private Thread fgThread;
+    private BlockingQueue<Runnable> fgCommands = new LinkedBlockingDeque<Runnable>();
 
 
     public Model() {
         fg = null;
-        pool = Executors.newFixedThreadPool(2);
+//        pool = Executors.newFixedThreadPool(1);
     }
 
     public void aileron(float a) {
@@ -35,8 +34,7 @@ public class Model extends Observable {
     }
 
     public void rudder(double r) {
-//        fgCommands.add("set /controls/flight/rudder " + r + newline);
-        pool.execute(new Runnable() {
+        fgCommands.add(new Runnable() {
             @Override
             public void run() {
                 out.print("set /controls/flight/rudder " + r + newline);
@@ -45,28 +43,37 @@ public class Model extends Observable {
         });
     }
 
-    public void throttle(float t) {
-        pool.execute(() -> {
-                    out.print("set /controls/engines/current-engine/throttle" + t + newline);
-                    out.flush();
-                }
-        );
+    public void throttle(double t) {
+        fgCommands.add(new Runnable() {
+            @Override
+            public void run() {
+                out.print("set /controls/engines/current-engine/throttle " + t + newline);
+                out.flush();
+            }
+        });
 
     }
 
+
+
     public void connectToFlightGear(String ip, int port) {
 
-        pool.execute(new Runnable() {
+        fgThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                //connecting to flightgear simulator.
                 try {
                     fg = new Socket(ip, port);
                     stop = false;
                     out = new PrintWriter(fg.getOutputStream(), true);
                     isConnected = true;
+                    synchronized (this) {
+                        //notify if connection is succeeded or failed
+                        setChanged();
+                        notifyObservers(isConnected);
+                    }
                 } catch (IOException e) {
                     isConnected = false;
-                } finally {
                     synchronized (this) {
                         //notify if connection is succeeded or failed
                         setChanged();
@@ -74,48 +81,17 @@ public class Model extends Observable {
                     }
                 }
 
-                while(!stop) {
-                    //stay connected.
+                while (!stop) {
+                    try {
+                        fgCommands.take().run();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
         });
-
-//        t = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                //connecting to flightgear simulator.
-//                try {
-//                    fg = new Socket(ip, port);
-//                    stop = false;
-//                    out = new PrintWriter(fg.getOutputStream(), true);
-//                    isConnected = true;
-//                } catch (IOException e) {
-//                    isConnected = false;
-//                } finally {
-//                    synchronized (this) {
-//                        //notify if connection is succeeded or failed
-//                        setChanged();
-//                        notifyObservers(isConnected);
-//                    }
-//                }
-//
-//                while (!stop) {
-//                    synchronized (this){
-//                        if(!fgCommands.isEmpty()) {
-//                            try {
-//                                pool.execute(fgCommands.take());
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//
-//                }
-//
-//
-//            }
-//        });
-//        t.start();
+        fgThread.start();
 
     }
 

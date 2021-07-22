@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements Observer {
     private ActivityMainBinding binding;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,8 +69,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
         binding.rudderSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                double value = (float) i / 50.0 - 1;
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                double value = (float) progress / 50.0 - 1;
                 vm.setRudder(value);
             }
 
@@ -86,6 +85,23 @@ public class MainActivity extends AppCompatActivity implements Observer {
             }
         });
 
+        binding.throttleVerticalSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                double value = (float) progress / 100;
+                vm.setThrottle(value);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
     }
 
@@ -93,11 +109,11 @@ public class MainActivity extends AppCompatActivity implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         Toast toast;
-        if(o == vm) {
-            if(arg.equals(MsgUtil.CONNECTION_FAILED)) {
+        if (o == vm) {
+            if (arg.equals(MsgUtil.CONNECTION_FAILED)) {
                 showConnectionToast(MsgUtil.CONNECTION_FAILED, MsgUtil.CONNECT, true, Color.CYAN);
             }
-            if(arg.equals(MsgUtil.CONNECTION_SUCCESS)) {
+            if (arg.equals(MsgUtil.CONNECTION_SUCCESS)) {
                 showConnectionToast(MsgUtil.CONNECTION_SUCCESS, MsgUtil.CONNECTED, false, Color.GREEN);
 
             }
@@ -105,19 +121,15 @@ public class MainActivity extends AppCompatActivity implements Observer {
     }
 
     private void showConnectionToast(String toastMsg, String endingBtnTxt, boolean isBtnClickableAtEnd, int endingBtnColor) {
-        Toast toast;
-        Looper.prepare();
-        toast = Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT);
-        toast.show();
-        runOnUiThread(new Runnable() {
+        this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 binding.connectButton.setText(endingBtnTxt);
                 binding.connectButton.setBackgroundColor(endingBtnColor);
                 binding.connectButton.setEnabled(isBtnClickableAtEnd);
                 binding.connectButton.setTextColor(Color.BLACK);
+
             }
         });
-        Looper.loop();
     }
 }

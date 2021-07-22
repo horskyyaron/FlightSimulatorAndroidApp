@@ -31,7 +31,7 @@ public class ViewModel extends Observable implements Observer {
         model.rudder(r);
     }
 
-    public void setThrottle(float t) {
+    public void setThrottle(double t) {
         model.throttle(t);
     }
 
