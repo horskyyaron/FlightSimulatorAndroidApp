@@ -1,6 +1,8 @@
 package com.example.remotejoystick17.model;
 
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -25,12 +27,24 @@ public class Model extends Observable {
 //        pool = Executors.newFixedThreadPool(1);
     }
 
-    public void aileron(float a) {
-        //send to flight gear
+    public void aileron(double a) {
+        fgCommands.add(new Runnable() {
+            @Override
+            public void run() {
+                out.print("set /controls/flight/aileron " + a + newline);
+                out.flush();
+            }
+        });
     }
 
-    public void elevator(float e) {
-        //send to flight gear.
+    public void elevator(double e) {
+        fgCommands.add(new Runnable() {
+            @Override
+            public void run() {
+                out.print("set /controls/flight/elevato r" + e + newline);
+                out.flush();
+            }
+        });
     }
 
     public void rudder(double r) {

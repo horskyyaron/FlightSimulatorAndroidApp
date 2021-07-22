@@ -1,19 +1,13 @@
 package com.example.remotejoystick17.views;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingComponent;
 import androidx.databinding.DataBindingUtil;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.icu.lang.UCharacter;
 import android.os.Bundle;
-import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -25,8 +19,6 @@ import com.example.remotejoystick17.view_model.ViewModel;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 public class MainActivity extends AppCompatActivity implements Observer {
 
@@ -102,6 +94,16 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
             }
         });
+
+        binding.joystick.setOnJoystickChangeListener(new Joystick.OnJoystickChangeListener() {
+            @Override
+            public void onChange(double x, double y) {
+                vm.setAileron(x);
+                vm.setElevator(y);
+            }
+        });
+
+
 
     }
 

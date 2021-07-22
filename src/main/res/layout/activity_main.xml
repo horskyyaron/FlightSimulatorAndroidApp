@@ -12,8 +12,10 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/black"
         tools:context=".views.MainActivity">
 
         <EditText
@@ -66,24 +68,22 @@
             app:layout_constraintTop_toBottomOf="@+id/port_edit_text"
             app:layout_constraintVertical_bias="0.0" />
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="237dp"
-            android:layout_height="268dp"
-            android:src="@drawable/sukuna"
+        <com.example.remotejoystick17.views.Joystick
+            android:id="@+id/joystick"
+            android:layout_width="265dp"
+            android:layout_height="265dp"
             app:layout_constraintBottom_toTopOf="@+id/rudder_seekbar"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.3"
-            app:layout_constraintStart_toEndOf="@+id/throttle_vertical_seekbar"
-            app:layout_constraintTop_toBottomOf="@+id/port_edit_text"
-            app:layout_constraintVertical_bias="0.507" />
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/connect_button" />
 
         <Button
             android:id="@+id/connect_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/connect_btn"
-            app:layout_constraintBottom_toTopOf="@+id/imageView2"
+            app:layout_constraintBottom_toTopOf="@+id/joystick"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/port_edit_text" />

@@ -19,11 +19,11 @@ public class ViewModel extends Observable implements Observer {
         this.model = model;
     }
 
-    public void setAileron(float a) {
+    public void setAileron(double a) {
         model.aileron(a);
     }
 
-    public void setElevator(float e) {
+    public void setElevator(double e) {
         model.elevator(e);
     }
 
