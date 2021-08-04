@@ -23,6 +23,8 @@ import java.util.Observer;
 public class MainActivity extends AppCompatActivity implements Observer {
 
 
+    private static final int NO_COLOR_CHANGE = 0;
+    private static final int DEFUALT_CONNECT_BUTTON_COLOR = Color.rgb(187, 134, 252);
     private ViewModel vm;
     private Model m;
     Context context;
@@ -44,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements Observer {
         vm.addObserver(this);
 
 
+        binding.connectButton.setBackgroundColor(DEFUALT_CONNECT_BUTTON_COLOR);
+        binding.disconnectBtn.setVisibility(View.INVISIBLE);
+        binding.disconnectBtn.setEnabled(false);
+
         //connect button click event
         binding.connectButton.setOnClickListener((View view) -> {
 
@@ -57,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
             //try to connect.
             vm.connectToFlightGear(binding.ipEditText.getText().toString(), binding.portEditText.getText().toString());
+        });
+
+        binding.disconnectBtn.setOnClickListener((View view) -> {
+            vm.disconnectFromFlightGear();
         });
 
         binding.rudderSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -98,39 +108,70 @@ public class MainActivity extends AppCompatActivity implements Observer {
         binding.joystick.setOnJoystickChangeListener(new Joystick.OnJoystickChangeListener() {
             @Override
             public void onChange(double x, double y) {
-                vm.setAileron(x);
-                vm.setElevator(y);
+                if (vm.isConnected()) {
+                    vm.setAileron(x);
+                    vm.setElevator(y);
+                }
             }
         });
-
-
 
     }
 
 
     @Override
     public void update(Observable o, Object arg) {
-        Toast toast;
-        if (o == vm) {
-            if (arg.equals(MsgUtil.CONNECTION_FAILED)) {
-                showConnectionToast(MsgUtil.CONNECTION_FAILED, MsgUtil.CONNECT, true, Color.CYAN);
-            }
-            if (arg.equals(MsgUtil.CONNECTION_SUCCESS)) {
-                showConnectionToast(MsgUtil.CONNECTION_SUCCESS, MsgUtil.CONNECTED, false, Color.GREEN);
 
+        if (o == vm) {
+            switch (arg.toString()) {
+                case MsgUtil.CONNECTION_SUCCESS_MSG:
+                    updateDisconnectBtn(View.VISIBLE, true);
+                    showConnectionToast(MsgUtil.CONNECTION_SUCCESS_MSG, MsgUtil.CONNECTED, false, Color.GREEN);
+                    break;
+                case MsgUtil.CONNECTION_FAILED_MSG:
+                    showConnectionToast(MsgUtil.CONNECTION_FAILED_MSG, MsgUtil.CONNECT, true, DEFUALT_CONNECT_BUTTON_COLOR);
+                    break;
+                case MsgUtil.CONNECTION_DISCONNECTED_MSG:
+                    updateDisconnectBtn(View.INVISIBLE, false);
+                    showConnectionToast(MsgUtil.CONNECTION_DISCONNECTED_MSG, MsgUtil.CONNECT, true, DEFUALT_CONNECT_BUTTON_COLOR);
+                    break;
+                case MsgUtil.NOT_VALID_PORT_INPUT_MSG:
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //updating text on button and make it unclickable during the connection attempt
+                            binding.connectButton.setText(MsgUtil.CONNECT);
+                            binding.connectButton.setEnabled(true);
+                            Toast toast = Toast.makeText(context,MsgUtil.NOT_VALID_PORT_INPUT_MSG,Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    });
+                    break;
+                default:
+                    return;
             }
         }
     }
 
-    private void showConnectionToast(String toastMsg, String endingBtnTxt, boolean isBtnClickableAtEnd, int endingBtnColor) {
+    private void updateDisconnectBtn(int visibility, boolean isEnabled) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                binding.connectButton.setText(endingBtnTxt);
-                binding.connectButton.setBackgroundColor(endingBtnColor);
-                binding.connectButton.setEnabled(isBtnClickableAtEnd);
-                binding.connectButton.setTextColor(Color.BLACK);
+                binding.disconnectBtn.setVisibility(visibility);
+                binding.disconnectBtn.setEnabled(isEnabled);
+            }
+        });
+    }
 
+    private void showConnectionToast(String toastMsg, String connectBtnEndingText, boolean isConnectBtnEnabled, int connectBtnColor) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                binding.connectButton.setText(connectBtnEndingText);
+                binding.connectButton.setBackgroundColor(connectBtnColor);
+                binding.connectButton.setEnabled(isConnectBtnEnabled);
+                binding.connectButton.setTextColor(Color.BLACK);
+                Toast toast = Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
     }

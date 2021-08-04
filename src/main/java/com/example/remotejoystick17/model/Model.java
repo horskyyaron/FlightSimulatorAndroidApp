@@ -3,6 +3,8 @@ package com.example.remotejoystick17.model;
 
 import android.util.Log;
 
+import com.example.remotejoystick17.MsgUtil.MsgUtil;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -69,7 +71,6 @@ public class Model extends Observable {
     }
 
 
-
     public void connectToFlightGear(String ip, int port) {
 
         fgThread = new Thread(new Runnable() {
@@ -81,11 +82,28 @@ public class Model extends Observable {
                     stop = false;
                     out = new PrintWriter(fg.getOutputStream(), true);
                     isConnected = true;
-                    synchronized (this) {
-                        //notify if connection is succeeded or failed
-                        setChanged();
-                        notifyObservers(isConnected);
+
+                    while (isConnected) {
+                        synchronized (this) {
+                            //notify if connection is succeeded or failed
+                            setChanged();
+                            notifyObservers(isConnected);
+                        }
+
+                        while (!stop) {
+                            try {
+                                fgCommands.take().run();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
+
+                    //closed connection.
+                    fg.close();
+                    setChanged();
+                    notifyObservers(MsgUtil.DISCONNECTED);
+
                 } catch (IOException e) {
                     isConnected = false;
                     synchronized (this) {
@@ -95,13 +113,6 @@ public class Model extends Observable {
                     }
                 }
 
-                while (!stop) {
-                    try {
-                        fgCommands.take().run();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
 
             }
         });
@@ -113,4 +124,15 @@ public class Model extends Observable {
         return isConnected;
     }
 
+
+
+    public void disconnect() {
+        fgCommands.add(new Runnable() {
+            @Override
+            public void run() {
+                stop = true;
+                isConnected = false;
+            }
+        });
+    }
 }
