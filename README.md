@@ -15,7 +15,7 @@ The app controls a plane flight which will be simulated in a simulation software
 	* horizontal to control the rudder.
 * Disconnect button to disconnect from the simulator if needed.
 
-A picture here!!!!!
+![](ReadMeImages/appscreenshot.JPG)
 
 ## Folder Structure
 
