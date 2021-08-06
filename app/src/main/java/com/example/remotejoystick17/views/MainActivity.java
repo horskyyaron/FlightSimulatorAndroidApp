@@ -11,7 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.example.remotejoystick17.MsgUtil.MsgUtil;
+import com.example.remotejoystick17.MsgUtil.Util;
 import com.example.remotejoystick17.R;
 import com.example.remotejoystick17.databinding.ActivityMainBinding;
 import com.example.remotejoystick17.model.Model;
@@ -23,8 +23,7 @@ import java.util.Observer;
 public class MainActivity extends AppCompatActivity implements Observer {
 
 
-    private static final int NO_COLOR_CHANGE = 0;
-    private static final int DEFUALT_CONNECT_BUTTON_COLOR = Color.rgb(187, 134, 252);
+
     private ViewModel vm;
     private Model m;
     Context context;
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
         vm.addObserver(this);
 
 
-        binding.connectButton.setBackgroundColor(DEFUALT_CONNECT_BUTTON_COLOR);
+        binding.connectButton.setBackgroundColor(Util.DEFUALT_CONNECT_BUTTON_COLOR);
         binding.disconnectBtn.setVisibility(View.INVISIBLE);
         binding.disconnectBtn.setEnabled(false);
 
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
             //updating text on button and make it unclickable during the connection attempt
-            binding.connectButton.setText(MsgUtil.CONNECTING);
+            binding.connectButton.setText(Util.CONNECTING);
             binding.connectButton.setEnabled(false);
 
             //try to connect.
@@ -123,25 +122,25 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
         if (o == vm) {
             switch (arg.toString()) {
-                case MsgUtil.CONNECTION_SUCCESS_MSG:
+                case Util.CONNECTION_SUCCESS_MSG:
                     updateDisconnectBtn(View.VISIBLE, true);
-                    showConnectionToast(MsgUtil.CONNECTION_SUCCESS_MSG, MsgUtil.CONNECTED, false, Color.GREEN);
+                    showConnectionToast(Util.CONNECTION_SUCCESS_MSG, Util.CONNECTED, false, Color.GREEN);
                     break;
-                case MsgUtil.CONNECTION_FAILED_MSG:
-                    showConnectionToast(MsgUtil.CONNECTION_FAILED_MSG, MsgUtil.CONNECT, true, DEFUALT_CONNECT_BUTTON_COLOR);
+                case Util.CONNECTION_FAILED_MSG:
+                    showConnectionToast(Util.CONNECTION_FAILED_MSG, Util.CONNECT, true, Util.DEFUALT_CONNECT_BUTTON_COLOR);
                     break;
-                case MsgUtil.CONNECTION_DISCONNECTED_MSG:
+                case Util.CONNECTION_DISCONNECTED_MSG:
                     updateDisconnectBtn(View.INVISIBLE, false);
-                    showConnectionToast(MsgUtil.CONNECTION_DISCONNECTED_MSG, MsgUtil.CONNECT, true, DEFUALT_CONNECT_BUTTON_COLOR);
+                    showConnectionToast(Util.CONNECTION_DISCONNECTED_MSG, Util.CONNECT, true, Util.DEFUALT_CONNECT_BUTTON_COLOR);
                     break;
-                case MsgUtil.NOT_VALID_PORT_INPUT_MSG:
+                case Util.NOT_VALID_PORT_INPUT_MSG:
                     this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             //updating text on button and make it unclickable during the connection attempt
-                            binding.connectButton.setText(MsgUtil.CONNECT);
+                            binding.connectButton.setText(Util.CONNECT);
                             binding.connectButton.setEnabled(true);
-                            Toast toast = Toast.makeText(context,MsgUtil.NOT_VALID_PORT_INPUT_MSG,Toast.LENGTH_SHORT);
+                            Toast toast = Toast.makeText(context, Util.NOT_VALID_PORT_INPUT_MSG,Toast.LENGTH_SHORT);
                             toast.show();
                         }
                     });

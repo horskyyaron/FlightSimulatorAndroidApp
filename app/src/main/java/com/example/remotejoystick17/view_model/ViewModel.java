@@ -1,8 +1,6 @@
 package com.example.remotejoystick17.view_model;
 
-import android.util.Log;
-
-import com.example.remotejoystick17.MsgUtil.MsgUtil;
+import com.example.remotejoystick17.MsgUtil.Util;
 import com.example.remotejoystick17.model.Model;
 
 import java.util.Observable;
@@ -11,7 +9,7 @@ import java.util.Observer;
 
 public class ViewModel extends Observable implements Observer {
 
-    private static final int NOT_VALID_PORT = -1;
+
     private Model model;
 
     public ViewModel(Model model) {
@@ -44,11 +42,11 @@ public class ViewModel extends Observable implements Observer {
         try {
             portNumber = Integer.parseInt(port);
         } catch (NumberFormatException e) {
-            portNumber = NOT_VALID_PORT;
+            portNumber = Util.NOT_VALID_PORT;
         }
-        if (portNumber == NOT_VALID_PORT) {
+        if (portNumber == Util.NOT_VALID_PORT) {
             setChanged();
-            notifyObservers(MsgUtil.NOT_VALID_PORT_INPUT_MSG);
+            notifyObservers(Util.NOT_VALID_PORT_INPUT_MSG);
             return;
         }
 
@@ -57,12 +55,12 @@ public class ViewModel extends Observable implements Observer {
 
     private void connectionFailed() {
         setChanged();
-        notifyObservers(MsgUtil.CONNECTION_FAILED_MSG);
+        notifyObservers(Util.CONNECTION_FAILED_MSG);
     }
 
     private void connectionSucceeded() {
         setChanged();
-        notifyObservers(MsgUtil.CONNECTION_SUCCESS_MSG);
+        notifyObservers(Util.CONNECTION_SUCCESS_MSG);
     }
 
 
@@ -72,7 +70,7 @@ public class ViewModel extends Observable implements Observer {
             if (model.isConnected()) {
                 connectionSucceeded();
             } else {
-                if (arg.equals(MsgUtil.DISCONNECTED)) {
+                if (arg.equals(Util.DISCONNECTED)) {
                     connectionDisconnected();
                 } else {
                     connectionFailed();
@@ -84,7 +82,7 @@ public class ViewModel extends Observable implements Observer {
 
     private void connectionDisconnected() {
         setChanged();
-        notifyObservers(MsgUtil.CONNECTION_DISCONNECTED_MSG);
+        notifyObservers(Util.CONNECTION_DISCONNECTED_MSG);
     }
 
     public void disconnectFromFlightGear() {

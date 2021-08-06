@@ -1,9 +1,7 @@
 package com.example.remotejoystick17.model;
 
 
-import android.util.Log;
-
-import com.example.remotejoystick17.MsgUtil.MsgUtil;
+import com.example.remotejoystick17.MsgUtil.Util;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,26 +12,23 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class Model extends Observable {
 
-    private static String newline = "\r\n";
-
     private boolean stop;
     private static boolean isConnected = false;
-    private Socket fg;
+    private Socket flightGearSocket;
     private PrintWriter out;
     private Thread fgThread;
     private BlockingQueue<Runnable> fgCommands = new LinkedBlockingDeque<Runnable>();
 
 
     public Model() {
-        fg = null;
-//        pool = Executors.newFixedThreadPool(1);
+        flightGearSocket = null;
     }
 
     public void aileron(double a) {
         fgCommands.add(new Runnable() {
             @Override
             public void run() {
-                out.print("set /controls/flight/aileron " + a + newline);
+                out.print("set /controls/flight/aileron " + a + Util.newline);
                 out.flush();
             }
         });
@@ -43,7 +38,7 @@ public class Model extends Observable {
         fgCommands.add(new Runnable() {
             @Override
             public void run() {
-                out.print("set /controls/flight/elevato r" + e + newline);
+                out.print("set /controls/flight/elevato r" + e + Util.newline);
                 out.flush();
             }
         });
@@ -53,7 +48,7 @@ public class Model extends Observable {
         fgCommands.add(new Runnable() {
             @Override
             public void run() {
-                out.print("set /controls/flight/rudder " + r + newline);
+                out.print("set /controls/flight/rudder " + r + Util.newline);
                 out.flush();
             }
         });
@@ -63,7 +58,7 @@ public class Model extends Observable {
         fgCommands.add(new Runnable() {
             @Override
             public void run() {
-                out.print("set /controls/engines/current-engine/throttle " + t + newline);
+                out.print("set /controls/engines/current-engine/throttle " + t + Util.newline);
                 out.flush();
             }
         });
@@ -78,9 +73,9 @@ public class Model extends Observable {
             public void run() {
                 //connecting to flightgear simulator.
                 try {
-                    fg = new Socket(ip, port);
+                    flightGearSocket = new Socket(ip, port);
                     stop = false;
-                    out = new PrintWriter(fg.getOutputStream(), true);
+                    out = new PrintWriter(flightGearSocket.getOutputStream(), true);
                     isConnected = true;
 
                     while (isConnected) {
@@ -100,9 +95,9 @@ public class Model extends Observable {
                     }
 
                     //closed connection.
-                    fg.close();
+                    flightGearSocket.close();
                     setChanged();
-                    notifyObservers(MsgUtil.DISCONNECTED);
+                    notifyObservers(Util.DISCONNECTED);
 
                 } catch (IOException e) {
                     isConnected = false;
@@ -123,8 +118,6 @@ public class Model extends Observable {
     public boolean isConnected() {
         return isConnected;
     }
-
-
 
     public void disconnect() {
         fgCommands.add(new Runnable() {
