@@ -22,8 +22,6 @@ import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity implements Observer {
 
-
-
     private ViewModel vm;
     private Model m;
     Context context;
@@ -43,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
         m.addObserver(vm);
         vm.addObserver(this);
-
 
         binding.connectButton.setBackgroundColor(Util.DEFUALT_CONNECT_BUTTON_COLOR);
         binding.disconnectBtn.setVisibility(View.INVISIBLE);
