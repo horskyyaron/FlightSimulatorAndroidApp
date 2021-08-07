@@ -16,6 +16,8 @@ local.properties
 .idea/
 *.iml
 
+.Project'sVideo/
+
 # OS-specific files
 .DS_Store
 .DS_Store?
